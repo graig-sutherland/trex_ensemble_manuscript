@@ -1,0 +1,142 @@
+\documentclass{article}
+
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{graphicx}
+\usepackage{epstopdf, epsfig}
+\usepackage{subfigure}
+\usepackage{amsmath,amssymb}
+
+\title{Lagrangian Ensemble Forecasting in Support of Coastal Emergencies}
+\rhead{\scshape Lagrangian Forecast Skill- \today}
+
+\author{
+  Graig Sutherland\\
+  Environmental Numerical Prediction\\
+  Environment and Climate Change Canada\\
+  \texttt{graigory.sutherland@ec.gc.ca} \\
+  %% examples of more authors
+  %%\And
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+
+	Abstract goes here
+
+\end{abstract}
+
+
+% keywords can be removed
+\keywords{Lagrangian \and Forecast \and Skill \and Evaluation}
+
+\section{Outline}
+\begin{itemize}
+	\item Lagrangian trajectories are required for a broad range of marine emeregencies
+	\item Rely on operational ocean products
+	\item Difficult to evaluate
+	\item Sub-grid diffusion is required due to uncertainties in drift product
+	\item Use data from TReX 
+	\item Decide on a windage factor (use 2\%)
+	\item CIOPS-E surface currents
+	\item relative CRPS for ensembles
+	\item absolute Energy Score
+	\item look at mean scores
+	\item find the best scores for various sub-grid dispersion models
+\end{itemize}
+\subsection{Figures}
+\begin{enumerate}
+	\item Region with drifter tracks. Classic spaghetti plot to show the chaos.
+	\item Snapshot of current with drifter? Show eddies, etc.
+	\item Windage plot for each drifter? This could be in the appendix
+	\item Spectra? frequency and wavenumber space. Did not work out as well as I hoped.
+	\item Horizontal diffusivity. snapshot vs mean. Thinking a panel with spatial mean, smaller panel with statistics over region of mean and anomaly
+	\item Sample 72 hour prediction (or 48?). Show example.
+	\item Common metrics. Maybe I don't need this as mean is the same for all?
+	\item CRPS and Energy Score. Comparison with different diffusivities. 
+	\item Mean values of CRPS showing optimal diffusivity
+\end{enumerate}
+
+\section{Introduction}
+\label{sec:intro}
+
+Predicting the drift of objects in coastal waters on short time scales, e.g. hours to days, is common to many applications in operational oceanography such as search (ref) and marine pollution 
+
+\begin{itemize}
+	\item MER strongly dependent on operational ocean models for Lagrangian trajectories
+	\item These models have errors.
+	\item Need tools to include uncertainty and evaluate model
+\end{itemize}
+
+Modelling the trajectories of material and objects at sea are a key component of making informed decisions to support Marine Emergency Response (MER) <ref>. MER covers environmental emergencies, such as marine oil spills <ref>, as well as drifting objects (e.g. lost shipping containers <ref>) or persons with a threat to life and property (e.g. search and rescue and/or vessles adrift at sea <ref>). As these emergencies occur at the sea surface, the output from atmospheric, oceanic and wave modelling systems must be combined to provide trajectory forecasts~\citep{Davidson_etal_2009}. 
+
+A large component of MER applications is the accurate prediction of the future location of the drifting material and/or object as this will help optimize the response for the best outcome. Drift trajectories are forced by a combination of ocean currents, marine winds, and surface waves with the relative importance of each forcing depending on the object/material buoyancy and shape. As these fields are required immediately, and into the future, marine environmental prediction systems  
+
+The majority of these MER applications require forecasts from hours to days, and often in coastal regions. 
+
+
+\section{Methods}
+\label{sec:meth}
+
+Lagrangian trajectories are created by integrating the Lagrangian velocity in time,
+\begin{equation}
+	\label{eq:trajectory}
+	\frac{\partial \mathbf{x}}{\partial t} = \mathbf{u}_L\left(\mathbf{x},t\right),
+\end{equation}
+where $\mathbf{x}$ is the position, $\mathbf{u}_L$ is the Lagrangian velocity expressed as a function of space and time. The Lagrangian velocity for a drifting object is a function of the Eulerian ocean velocity ($\mathbf{u}_E$}, the Stokes drift ($\mathbf{u}_S$), and a leeway parameter ($\mathbf{\alpha}$) that includes direct wind forcing on the object, i.e.
+\begin{equation}
+	\label{eq:velocity}
+	\mathbf{u}_L = \mathbf{u}_E + \mathbf{u}_S + \mathbf{\alpha}\mathbf{U}_{10}
+\end{equation}
+where $\mathbf{U}_{10}$ is the 10 metre wind velocity and all velocities are a function of space and time. Typically the leeway is assumed to be constant, but it does not have to be~\citep{Sutherland_etal_2020}. If a wave model is not available then the Stokes drift can be estimated as an additional leeway, with typical values of 1.0\% to 1.5\% of $\mathbf{U}_{10}$~\citep{Sutherland_etal_2020}. 
+
+For leeway models, the Stokes drift is often assumed to be included in the leeway coefficient (Breivik), while there is some debate on whether this is true depending on how the leeway was calculated (sutherland hsipping contianer). 
+
+The velocity field for trajectory modelling is provided on a grid with finite spatial and temporal resolution. This requires the finite fields to be interpolated in space and time along the simulated trajectory. 
+
+
+
+
+\begin{equation}
+	\label{eq:markov0}
+	d\mathbf{x} = \left[ \bar{\mathbf{u}} \left(\mathbf{x}\right) + \nabla\cdot\mathbf{K}\left(\mathbf{x}\right)\right] dt + \mathbf{V}\left(\mathbf{x}\right)\cdot d\mathbf{W}\left(t\right)
+\end{equation}
+where $\mathbf{V}$ is the rms velocity and related to the diffusivity by $2\mathbf{K} = \mathbf{V} \cdot \mathbf{V}^*$
+
+\section{Data}
+
+\begin{figure}[ht!]
+	\centering
+	\label{eq:tracks}
+	\includegraphics[width=\textwidth]{figs/drifter_tracks_all_60T_split6H_gradient_NaNs.png}
+	\caption{Drifter tracks (orange) from 10 September 2020 to 21 September 2020. Background image is gebco elevation data <ref>.}
+\end{figure}
+
+\section{Discussion}
+
+\section{Conclusions}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ACKNOWLEDGMENTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\section{Acknowledgements}
+%All data used in the study are available from the cited references. This project is funded by the Norwegian Research Council (233901) and through CMEMS ARC-MFC.
+
+
+\bibliographystyle{jfm}
+\bibliography{sutherland}
+
+
+\end{document}
